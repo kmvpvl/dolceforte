@@ -1,0 +1,619 @@
+openapi: '3.0.2'
+info:
+  title: CF
+  version: '1.0'
+servers:
+  - url: http://localhost:4000
+    description: Local server
+  - url: https://3z6czkv5-4000.euw.devtunnels.ms/
+    description: Development server
+  - url: https://cf-api.misis.space
+    description: Test server
+components:
+  schemas:
+###
+# Multi-language string object
+#
+    mlstring:
+      description: Multi-language string
+      oneOf:
+        - type: string
+        - type: object
+          required:
+            - default
+          properties:
+            default:
+              type: string
+            values:
+              type: array
+              items:
+                type: array
+                items: 
+                  type: string
+                minItems: 2
+                maxItems: 2
+###
+# Photo object
+#
+    photo:
+      type: object
+      required:
+        - url
+      properties:
+        url: 
+          type: string
+        caption:
+          $ref: "#/components/schemas/mlstring"
+      description: Photo object (URL to photo or dataurl of photo)
+###
+# The Proto object is the ancestor of all objects. It consists of service fields
+#
+#
+    proto:
+      description: The Proto object is the ancestor of all objects. It consists of service fields
+      type: object
+      properties:
+        id:
+          type: number
+          description: Uniq id of any record
+        locked:
+          oneOf:
+            - type: boolean
+            - type: number
+          description: Whether document is locked by user to change
+        lockedByUser:
+          type: string
+          description: Name of user who locks the document to change
+        blocked:
+          description: Whether document is blocked
+          oneOf:
+            - type: boolean
+            - type: number
+        created:
+          type: string
+          description: Creation date 
+        changed:
+          type: string
+          description: Date of last change of document
+        createdByUser:
+          description: User who created the document
+          type: string
+        changedByUser:
+          description: User who makes last change
+          type: string
+        wfStatus:
+          description: Current workflow status of document
+          type: number
+        wfHistory:
+          description: Workflow status change history
+          type: array
+    
+    ###
+    # The User object
+    user:
+      description: IUser structure
+      allOf:
+        - type: object
+          required:
+            - login
+            - email
+            - hash
+            - name
+            - signInAttemptsCount
+            - settings
+          properties:
+            login:
+              type: string
+              description: Uniq string of user
+            hash:
+              type: string
+              description: Hash code created by server 
+            name:
+              type: string
+              description: Visible name of user
+            email:
+              type: string
+              description: User's e-mail
+            tguid:
+              oneOf:
+                - type: string
+                - type: number
+              description: Telegram user's id
+            signInAttemptsCount:
+              type: number
+              description: Count of unsuccessfulattempts to sign in
+            photo:
+              $ref: "#/components/schemas/photo"
+            bio:
+              description: Long text about user
+              type: string
+            settings:
+              description: User's settings
+              type: object
+              properties:
+                notifications:
+                  description: User's settings about notification
+                  type: object
+                  properties:
+                    tool:
+                      type: number
+                      description: The tool for user notification about system's event (e.g. Telegram, e-mail)
+                    events:
+                      type: object
+                      description: List of events for notification of users
+                      properties:
+                        signInSuccess:
+                          type: boolean
+                          description: Occurs when user signed in successfully
+                        signInFail:
+                          type: boolean
+                          description: Occurs when user was rejected by system
+                
+        - $ref: "#/components/schemas/proto"
+    ###
+    # The MealRequisites object
+    mealRequisites:
+      description: The MealRequisites object
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          $ref: "#/components/schemas/mlstring"
+        description:
+          $ref: "#/components/schemas/mlstring"
+    ###
+    # The MealOption object
+    mealOption:
+      description: Menu option object is availaible combination or volume of meal
+      type: object
+      required:
+        - name
+        - amount
+        - currency
+      properties:
+        name:
+          $ref: "#/components/schemas/mlstring"
+        amount:
+          type: number
+          description: Option cost
+        currency:
+          $ref: "#/components/schemas/mlstring"
+        esId:
+          type: string
+        includeOptions:
+          $ref: "#/components/schemas/mealOption"
+        excludeOptions:
+          $ref: "#/components/schemas/mealOption"
+    ###
+    # The Orderitem object
+    orderItem:
+      description: |
+        The OrderItem object = IOrderItem structure
+      allOf:
+        - $ref: "#/components/schemas/mealRequisites"
+        - type: object
+          required:
+            - option
+            - count
+          properties:
+            option:
+              $ref: "#/components/schemas/mealOption"
+            count:
+              type: number
+            comment:
+              type: string
+        - $ref: "#/components/schemas/proto"
+    ###
+    # The Order object
+    order:
+      description: Th Order object (IOrder)
+      allOf:
+        - type: object
+          required:
+            - items
+            - discount
+            - eateryId
+            - tableId
+            - payments
+          properties:
+            userId: 
+              type: number
+              description: Author id of object
+            eateryId:
+              type: number
+              description: Eatery where the order was created
+            tableId:
+              type: number
+              description: Table id where order was created
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/orderItem"
+            discount:
+              type: number
+              description: "1 or markup and discount applied to all order positions"
+            comment:
+              type: string
+            esId:
+              type: string
+        - $ref: "#/components/schemas/proto"
+    ###
+    # The Feedback object
+    feedback:
+      description: IFeedback object
+      allOf:
+        - type: object
+          required:
+            - rating
+            - objectType
+            - objectId
+          properties:
+            userId: 
+              type: number
+            rating:
+              type: number
+            comment:
+              type: string
+            objectType:
+              type: string
+            objectId:
+              type: number
+            answerToId:
+              type: number
+        - $ref: "#/components/schemas/proto"
+    feedbacksSummary:
+      description: average rating and rating count
+      type: object
+      required:
+        - rating
+        - count
+      properties:
+        rating:
+          type: number
+        count: 
+          type: number
+  requestBodies:
+    eateryPointer:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+            properties:
+              id:
+                description: Unique id of the Eatery
+                type: number
+                example: 1
+    orderPointer:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+            properties:
+              id:
+                description: Unique id of the Order
+                type: number
+                example: 1
+
+  responses:
+    errorResponse:
+      description: Universal error structure
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - ok
+              - message
+            properties:
+              ok:
+                type: boolean
+              message:
+                type: string
+              error:
+                type: object
+    userSuccess:
+      description: |
+        Any success answer consists of flag `ok` and object of User
+        Information about User was collected successfully
+        ```javascript
+        {
+            ok: true, 
+            eatery: IUser
+        }
+        ```
+      content:
+        application/json:
+          schema: 
+            type: object
+            required:
+              - ok
+              - user
+            properties:
+              ok:
+                type: boolean
+              user:
+                $ref: "#/components/schemas/user"
+    feedbackSuccess:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - ok
+              - feedback
+            properties:
+              ok:
+                type: boolean
+              feedback:
+                $ref: "#/components/schemas/feedback"
+  securitySchemes:
+    CFTGUserId:
+      type: apiKey
+      in: header
+      name: cf-tguid
+    TGQueryCheckString:
+      type: apiKey
+      in: header
+      name: cf-tgquerycheckstring
+    CFLogin:
+      type: apiKey
+      in: header
+      name: cf-login
+    CFPassword:
+      type: apiKey
+      in: header
+      name: cf-password
+paths:
+  /version:
+    get:
+      description: Returns version of CF API
+      operationId: version
+      security: []
+      responses:
+        '200': 
+          description: Alway successful if availaible
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - ok
+                  - version
+                properties:
+                  ok: 
+                    type: boolean
+                  version:
+                    type: string
+  /user/new:
+    post:
+      description: Creates new User. It may be an employee or a guest
+      tags:
+        - user
+        - create
+      operationId: newUser
+      parameters:
+        - name: cf-login
+          in: header
+          schema:
+            type: string
+            example: david@domain.com
+        - name: cf-password
+          in: header
+          schema:
+            type: string
+            example: daviDs_psw001
+        - name: cf-tguid
+          in: header
+          schema:
+            type: string
+        - name: cf-tgquerycheckstring
+          in: header
+          schema:
+            type: string
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - name
+              properties:
+                email:
+                  type: string
+                  example: david@domain.com
+                name:
+                  type: string
+                  example: David Rhuxel
+                tguid:
+                  oneOf:
+                    - type: string
+                    - type: number
+                photo:
+                  $ref: "#/components/schemas/photo"
+      responses:
+        '200':
+          $ref: "#/components/responses/userSuccess"
+        '400':
+          $ref: "#/components/responses/errorResponse"
+  /user/view:
+    description: Shows user details. If called without parameters then returns caller details. If parameter 'id' is present then reveals information about user with that uniq id
+    post:
+      tags:
+        - user
+        - view
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                  description: User's uniq id whose details get about
+      operationId: viewUser
+      responses:
+        '200':
+          $ref: "#/components/responses/userSuccess"
+        '400':
+          $ref: "#/components/responses/errorResponse"
+  /user/find:
+    description: Finds user by first letters (min 3) in its login or name and returns its details if only one user found. If more then one user found then returns 200 and ok field will be false
+    post:
+      tags:
+        - user
+        - view
+      operationId: findUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - firstLetters
+              properties:
+                firstLetters:
+                  type: string
+      responses:
+        '200':
+          $ref: "#/components/responses/userSuccess"
+        '404':
+          $ref: "#/components/responses/errorResponse"
+        '400':
+          $ref: "#/components/responses/errorResponse"
+  /meal/new:
+    post:
+      operationId: newMeal
+      responses:
+        '200':
+          description: OK
+  /meal/view:
+    post:
+      operationId: viewMeal
+      responses:
+        '200':
+          description: OK
+  /meal/update:
+    post:
+      operationId: updateMeal
+      responses:
+        '200':
+          description: OK
+  /menu/update:
+    post:
+      operationId: updateMenu
+      responses:
+        '200':
+          description: OK
+  /menu/view:
+    post:
+      operationId: viewMenu
+      responses:
+        '200':
+          description: OK
+  /feedback/update:
+    post:
+      tags:
+        - feedback
+        - update
+      description: 
+        Creates or update feedback
+      operationId: updateFeedback
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/feedback"
+      responses:
+        '200': 
+          $ref: "#/components/responses/feedbackSuccess"
+        '403':
+          $ref: "#/components/responses/errorResponse"
+        '400':
+          $ref: "#/components/responses/errorResponse"
+  /feedback/view:
+    post:
+      tags:
+        - feedback
+        - view
+      description: 
+        Returns feedback information
+      operationId: viewFeedback
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: number
+      responses:
+        '200': 
+          $ref: "#/components/responses/feedbackSuccess"
+        '403':
+          $ref: "#/components/responses/errorResponse"
+        '400':
+          $ref: "#/components/responses/errorResponse"
+  /feedback/list:
+    post:
+      tags:
+        - feedback
+        - view
+      description: 
+        Returns list of feedback information
+      operationId: feedbackList
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - objectType
+                - objectId
+              properties:
+                objectId:
+                  type: number
+                objectType:
+                  type: string
+                userId: 
+                  type: number
+      responses:
+        '200': 
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - ok
+                  - feedbacks
+                properties:
+                  ok:
+                    type: boolean
+                  feedbacks:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/feedback"
+                  summary:
+                    $ref: "#/components/schemas/feedbacksSummary"
+        '403':
+          $ref: "#/components/responses/errorResponse"
+        '400':
+          $ref: "#/components/responses/errorResponse"
+security:
+  - CFTGUserId: []
+    TGQueryCheckString: []
+  - CFLogin: []
+    CFPassword: []

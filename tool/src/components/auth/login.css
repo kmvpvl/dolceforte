@@ -1,0 +1,28 @@
+.login-sign-in {
+    /* Styles specific to the sign-in form */
+}
+
+.login-create-account {
+    /* Styles specific to the create account form */
+    display: grid;
+    grid-template-columns: auto 1fr;
+}
+
+.login-create-account h2   {
+    grid-column: span 2; /* Make the first child span both columns */
+}   
+
+.login-create-account span {
+    grid-row: span 6; /* Make the second child span both columns */
+}
+
+.login-forgot-password {
+    /* Styles specific to the forgot password form */
+}
+.customerapp-signin {
+    /* General styles for the login container */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}

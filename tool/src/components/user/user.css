@@ -1,0 +1,7 @@
+.user-container {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: bold;
+}

@@ -1,0 +1,8 @@
+.stars-container {
+    font-size: large;
+
+}
+
+.stars-container > span {
+    cursor: pointer;
+}

@@ -1,0 +1,50 @@
+services:
+#  db:
+#    image: mysql:latest
+#    restart: always
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: 
+  #     MYSQL_DATABASE: 
+  #     MYSQL_USER: 
+  #     MYSQL_PASSWORD: 
+  #     MYSQL_ALLOW_EMPTY_PASSWORD: 1
+  #   volumes:
+  #     - mysqldata:/var/lib/mysql
+  #   ports:
+  #     - "3306:3306"
+
+  # phpmyadmin:
+  #   image: phpmyadmin/phpmyadmin:latest
+  #   restart: always
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     PMA_HOST: db
+  #     MYSQL_ROOT_PASSWORD: 
+  #   ports:
+  #     - "8080:80"
+  cf-api:
+    image: cf-api:1
+    container_name: cf-api
+    build: ./api
+    restart: always
+#    depends_on: 
+#      - db
+    env_file:
+      - path: ./api/.env
+        required: true
+      - path: ./api/.env.development.local
+        required: false
+  cf-tool:
+    image: cf-tool:1
+    container_name: cf-tool
+    build: ./tool
+    restart: always
+    env_file:
+      - path: ./tool/.env
+        required: true
+      - path: ./tool/.env.development.local
+        required: false
+# volumes:
+#   mysqldata:
+#     name: mysqldata

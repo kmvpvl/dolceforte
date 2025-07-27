@@ -1,0 +1,94 @@
+.meal-container {
+    display: grid;
+    /* Photo, description, price of all options*/
+    grid-template-areas: 
+        "meal-name" 
+        "meal-description" 
+        "photos"
+        "meal-price-notice";
+
+    max-width: 100%;
+    max-height: 100%;
+    position: relative;
+    overflow: hidden;
+    --border: 1px dotted var(--text-color);
+    border-radius: 5px;
+    padding: 2px;
+    gap: 0.5em;
+}
+
+
+
+@media (height < 600px) {
+    .meal-container {
+        grid-template-areas: 
+        "photos meal-name"
+        "photos meal-description"
+        "photos meal-price-notice";
+    }
+}
+
+.meal-container.maximized {
+    width: 20em;
+    height: 14em;
+    font-size: 120%;
+}
+
+.meal-meal-description {
+    --font-size: 80%;
+    text-align: center;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: "Cinzel", serif;
+    color: var(--crnacokolada-color);
+    grid-area: meal-description;
+}
+.meal-meal-name{
+    text-align: center;
+    font-weight: bold;
+    font-family: "Cinzel", serif;
+
+    font-size: 200%;
+    color: var(--crnacokolada-color);
+    grid-area: meal-name;
+}
+
+.meal-price-notice {
+    text-align: center;
+    font-weight: bold;
+    font-family: "Cinzel", serif;
+    font-size: 120%;
+    color: var(--kakao-color);
+    grid-area: meal-price-notice;
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 0.5em;
+    justify-content: center;
+    align-items: center;
+}
+
+.meal-admin-container {
+    max-height: 100%;
+    height: fit-content;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    --overflow: hidden;
+    gap: 0.5em;
+}
+
+.meal-admin-requisites-container {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    --flex-flow: column;
+    grid-template-columns: 1fr 1fr;
+    gap:0.5em;
+}
+
+.meal-admin-requisites-description {
+    grid-column: span 2;
+}

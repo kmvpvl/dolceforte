@@ -1,0 +1,47 @@
+{
+  "name": "cf_tool",
+  "version": "1.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "html5-qrcode": "^2.2.7",
+    "react": "^19.0.0",
+    "react-data-grid": "^7.0.0-beta.47",
+    "react-dom": "^19.0.0",
+    "react-qr-code": "^2.0.15"
+  },
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "serve": "vite preview --host",
+    "test": "vitest",
+    "commit_prepare": "npm version patch && npm run prettier && npm run test",
+    "prettier": "npx prettier -w **/*.{ts*,html}"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^22.10.1",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^25.0.1",
+    "prettier": "^3.4.2",
+    "vite": "^7.0.5",
+    "vitest": "^3.2.4",
+    "web-vitals": "^4.2.4"
+  }
+}

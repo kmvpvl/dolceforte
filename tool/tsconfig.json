@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2016",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": false,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "sourceMap": true,                                /* Create source map files for emitted JavaScript files. */
+    "jsx": "react-jsx",
+    "paths": {"@betypes/*": ["../api/src/types/*"]},
+    "types": ["vitest/globals"]
+  },
+  "include": [
+    "src", "vite-env.d.ts", "./src/__test__/setup.ts" 
+  ]
+}

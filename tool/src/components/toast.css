@@ -1,0 +1,143 @@
+.toasts-container,
+.toasts-container-modal {
+    width: 80%;
+    height: fit-content;
+    background-color: var(--background-color);
+    position: fixed;
+    display: flex;
+    align-items: center;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    background-color: transparent;
+}
+
+.toasts-container-modal {
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+}
+.toasts-fade {
+    opacity: 0.8;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: gray;
+}
+.toast-container-center {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    --width: 100%;
+    max-width: 768px;
+    position: relative;
+    padding: 1em 0 0 0;
+}
+.toast-container-count-label {
+    position: absolute;
+    right: 0;
+    top: -0em;
+    border: 1px solid;
+    border-radius: 0.5em;
+    padding: 0.25em;
+    font-size: small;
+    background-color: navy;
+    color: white;
+    border-color: blue;
+    cursor: pointer;
+}
+.toast-container-error,
+.toast-container-warning,
+.toast-container-info,
+.toast-container-success {
+    border-width: 1px;
+    border-style: solid;
+    padding: .5em;
+    border-radius: 0.2em;
+    margin: 10px;
+    position: relative;
+    padding-top: 1em;
+}
+
+.toast-container-error {
+    color: white;
+    background-color: var(--error-color);
+}
+.toast-container-warning {
+    color: white;
+    background-color: var(--warning-color);
+}
+.toast-container-success {
+    color: white;
+    background-color: var(--success-color);
+}
+.toast-container-info {
+    color: var(--text-color);
+    background-color: var(--info-color);
+}
+.toast-close-button,
+.toast-copy-button,
+.toast-description-button,
+.toast-description-button-selected {
+    position: absolute;
+    top: 0em;
+    border-style: solid;
+    border-left-width: 0px;
+    border-bottom-width: 0px;
+    border-top-width: 0px;
+    border-right-width: 0px;
+    --border-radius: 0.5em;
+    width: 1em;
+    height: 1em;
+    cursor: pointer;
+    text-align: center;
+}
+
+.toast-close-button {
+    right: 0em;
+}
+.toast-copy-button {
+    right: 2em;
+}
+.toast-description-button,
+.toast-description-button-selected {
+    right: 1em;
+}
+.toast-description-button-selected > span {
+    transform: rotate(180deg);
+    width: 100%;
+    text-align: center;
+    display: block;
+}
+
+.toast-close-button > span {
+    transform: rotate(45deg);
+    width: 100%;
+    text-align: center;
+    display: block;
+}
+.toast-message {
+    text-wrap: wrap;
+    margin-bottom: 1em;
+}
+
+.toast-description {
+    font-size: small;
+    max-height: 4em;
+    overflow: auto;
+}
+
+.toast-buttons-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+}
+
+.toast-buttons-container > button {
+    flex-grow: .2;
+}

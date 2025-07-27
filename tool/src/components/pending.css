@@ -1,0 +1,27 @@
+.pending-container {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+.pending-container span {
+    background-color: var(--background-color);
+    position: absolute;
+}
+
+.pending-container span:first-child {
+    opacity: 0.8;
+    width: 100%;
+    height: 100%;
+}
+
+.pending-container span:not(:first-child) {
+    padding: 1em;
+    border: 1px solid;
+    border-radius: 1em;
+    z-index: 1001;
+}
