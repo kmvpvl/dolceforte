@@ -81,7 +81,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--background-color);
   color: var(--text-color);
-  font-size: calc(10px);
+  font-size: calc(14px + 0.5vmin);
 }
 
 #root{
