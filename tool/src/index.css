@@ -81,7 +81,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--background-color);
   color: var(--text-color);
-  font-size: 14px;
+  font-size: calc(10px + .5vmin);
 }
 
 #root{
@@ -357,7 +357,7 @@ span.df-button-tiramisu, span.df-button-bottlegreen, span.df-button-tiramisu-inv
   font-family: Raleway, sans-serif;
   border-radius: 2px;
   padding: 5px 10px;
-  font-size: 2rem;
+  font-size: 24px;
   font-weight: 600;
   width: max-content;
   cursor: pointer;
@@ -366,7 +366,7 @@ span.df-button-tiramisu, span.df-button-bottlegreen, span.df-button-tiramisu-inv
 @media (width <= 768px) {
   span.df-button-tiramisu, span.df-button-bottlegreen, span.df-button-tiramisu-inverse, span.df-button-bottlegreen-inverse {
     padding: 5px 10px;
-    font-size: 1rem;
+    font-size: 1em;
   }
 }
 
@@ -393,12 +393,12 @@ span.df-button-bottlegreen {
 a.df-call {
   font-family: Raleway, sans-serif;
   color: var(--crnacokolada-color);
-  font-size: 1.2rem;
+  font-size: 1em;
   text-decoration: none;
 }
 
 a.df-call::before {
   content: "☎";
   margin-right: 0.2em;
-  font-size: 1.5rem;
+  font-size: 1em;
 }
