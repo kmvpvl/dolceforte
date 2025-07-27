@@ -22,7 +22,16 @@
 .preview-contacts {
     display: flex;
     flex-flow: column nowrap;
-    align-items: flex-end;
+    align-items: end;
+}
+
+@media (orientation: landscape) {
+    .preview-contacts {
+        flex-flow: row nowrap;
+        justify-content: end;
+        align-items: center;
+        gap: 1em;
+    }
 }
 
 .preview-navi {
