@@ -29,6 +29,7 @@ export default defineConfig((config) => {
     },
     build: {
       sourcemap: true,
+      chunkSizeWarningLimit: 1000,
     },
     css: {
       devSourcemap: true,
