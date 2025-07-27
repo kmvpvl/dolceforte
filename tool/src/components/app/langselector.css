@@ -6,7 +6,7 @@
     top: .2em;
     right: .2em;
     color: var(--tiramisu-color);
-    font-size: 0.8em;
+    font-size: 1rem;
 }
 
 .lang-selector-container span {
