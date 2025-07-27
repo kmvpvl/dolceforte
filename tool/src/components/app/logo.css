@@ -5,7 +5,7 @@
     height: 100%;
     overflow: hidden;
     display: grid;
-    grid-template-columns: 6rem 1fr;
+    grid-template-columns: 6em 1fr;
     text-align: left;
     gap: .2em;
 }
@@ -24,10 +24,10 @@
 
 @media (width < 768px)  {
     .logo-container {
-        grid-template-columns: 3rem auto;
+        grid-template-columns: 3em auto;
     }
     .logo-container > div {
-        font-size: 2.5rem;
+        font-size: 2.5em;
     }
    
 }
