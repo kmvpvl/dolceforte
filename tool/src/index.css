@@ -1,6 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel&family=Genos:ital,wght@0,100..900;1,100..900&family=Ubuntu&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cinzel&family=Genos:ital,wght@0,100..900;1,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Ubuntu&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=UbuntuMono&display=swap');
 
 @media (width >= 768px) {
     :root {
@@ -82,6 +80,12 @@ body {
   background-color: var(--background-color);
   color: var(--text-color);
   font-size: calc(14px + 0.5vmin);
+}
+
+@media (width < 768px) {
+  html, body {
+    font-size: calc(12px);
+  }
 }
 
 #root{
