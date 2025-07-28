@@ -21,7 +21,7 @@
     text-align: center;
 }
 
-@media (width < 768px)  {
+@media (width < 768px) or (height < 768px) {
     .logo-container {
         grid-template-columns: 50px 1fr;
     }
