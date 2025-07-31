@@ -1,10 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import EmployeeApp from "../employeeApp";
+import CustomerApp from "../components/app/customerApp";
 
 describe("Simple working test", () => {
 	it("the title is visible", () => {
-		render(<EmployeeApp mode="" />);
+		render(<CustomerApp />);
 		expect(screen.getByText(/Log in/i)).toBeInTheDocument();
 	});
 

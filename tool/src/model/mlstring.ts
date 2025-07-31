@@ -37,7 +37,7 @@ export const mlStrings = new Map([
 		new Map([
 			[`de`, `Ihre offenen Bestellungen (tippen Sie, um auszuwählen oder zu schließen):`],
 			[`fr`, `Vos commandes non clôturées (appuyez pour sélectionner ou fermer) :`],
-			[`es`, 'Sus pedidos no cerrados (toque para seleccionar o cerrar):'],
+			[`es`, "Sus pedidos no cerrados (toque para seleccionar o cerrar):"],
 			[`ru`, `Ваши незакрытые заказы (нажмите, чтобы выбрать или закрыть):`],
 			[`it`, `I tuoi ordini non chiusi (tappa per selezionare o chiudere):`],
 			[`sr`, `Ваше незатворене поруџбине (додирните да бисте изабрали или затворили):`],
@@ -48,7 +48,7 @@ export const mlStrings = new Map([
 		new Map([
 			[`de`, `Drücken Sie, um den QR-Code zu scannen`],
 			[`fr`, `Appuyez pour scanner le code QR`],
-			[`es`, 'Presione para escanear el código QR'],
+			[`es`, "Presione para escanear el código QR"],
 			[`ru`, `Нажмите, чтобы отсканировать QR-код`],
 			[`it`, `Premi per scansionare il codice QR`],
 			[`sr`, `Притисните да скенирате КР код`],
@@ -59,7 +59,7 @@ export const mlStrings = new Map([
 		new Map([
 			[`de`, `Scan abbrechen`],
 			[`fr`, `Annuler le scan`],
-			[`es`, 'Cancelar escaneo'],
+			[`es`, "Cancelar escaneo"],
 			[`ru`, `Отменить сканирование`],
 			[`it`, `Annulla scansione`],
 			[`sr`, `Откажи скенирање`],
@@ -963,14 +963,14 @@ export const mlStrings = new Map([
 		]),
 	],
 	[
-		``,
+		`From 150 RSD/100g`,
 		new Map([
 			[`de`, undefined],
 			[`fr`, undefined],
 			[`es`, undefined],
-			[`ru`, undefined],
+			[`ru`, `От 150 RSD/100г`],
 			[`it`, undefined],
-			[`sr`, undefined],
+			[`sr`, `Od 150 RSD/100g`],
 		]),
 	],
 	[

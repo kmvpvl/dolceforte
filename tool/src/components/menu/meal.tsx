@@ -32,6 +32,13 @@ export default class Meal extends Proto<IMealProps, IMealState> {
 		viewMode: this.props.viewMode !== undefined ? this.props.viewMode : ViewModeCode.normal,
 		editMode: this.props.editMode !== undefined ? this.props.editMode : false,
 	};
+	componentDidUpdate(prevProps: Readonly<IMealProps>, prevState: Readonly<IMealState>, snapshot?: any): void {
+		if (prevProps.defaultValue !== this.props.defaultValue) {
+			this.setState({
+				value: this.props.defaultValue ? this.props.defaultValue : this.new(),
+			});
+		}
+	}
 
 	componentDidMount(): void {
 		if (this.props.defaultValue === undefined && this.props.mealId !== undefined) this.load();
@@ -177,7 +184,10 @@ export default class Meal extends Proto<IMealProps, IMealState> {
 				</div>
 				<div className="meal-meal-description">{this.props.mealId !== undefined && this.state.value.id === undefined ? "Loading..." : this.toString(this.state.value.description)}</div>
 				{this.state.value.photos !== undefined ? <Photos defaultValue={this.state.value.photos} /> : <span />}
-				<div className="meal-price-notice"><span>{this.ML("From 150 RSD/100g")}</span><span className="df-button-bottlegreen-inverse">{this.ML("Configure yours")}</span></div>
+				<div className="meal-price-notice">
+					<span>{this.ML("From 150 RSD/100g")}</span>
+					<span className="df-button-bottlegreen">{this.ML("Configure yours")}</span>
+				</div>
 				<div className="context-toolbar">
 					{this.props.admin ? (
 						<span

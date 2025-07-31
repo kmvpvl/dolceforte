@@ -84,7 +84,7 @@ export default class Avatar extends Proto<IAvatarProps, IAvatarState> {
 				const src = reader.result;
 				if (src) {
 					const nState = this.state;
-					(nState.value = src.toString()), this.setState(nState);
+					((nState.value = src.toString()), this.setState(nState));
 					if (this.props.onChange !== undefined) this.props.onChange(nState.value);
 				}
 			};

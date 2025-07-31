@@ -78,7 +78,7 @@ export default class Photos extends React.Component<IPhotosProps, IPhotosState> 
 			const nState = this.state;
 			if (nState.value === this.props.defaultValue) return;
 			nState.value = this.props.defaultValue;
-			(nState.currentPhotoIndex = this.props.defaultValue !== undefined && this.props.defaultValue.length > 0 ? 0 : undefined), this.setState(nState);
+			((nState.currentPhotoIndex = this.props.defaultValue !== undefined && this.props.defaultValue.length > 0 ? 0 : undefined), this.setState(nState));
 		}
 	}
 

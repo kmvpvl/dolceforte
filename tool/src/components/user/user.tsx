@@ -6,7 +6,7 @@ import Proto, { IProtoProps, IProtoState } from "../proto";
 import { ToastType } from "../toast";
 
 export interface IUserProps extends IProtoProps {
-    id?: Types.ObjectId;
+	id?: Types.ObjectId;
 	defaultValue?: IUser;
 }
 
@@ -18,11 +18,11 @@ export default class User extends Proto<IUserProps, IUserState> {
 	state = {
 		value: this.props.defaultValue,
 	};
-    componentDidMount(): void {
-        this.loadUserInfo();
-    }
+	componentDidMount(): void {
+		this.loadUserInfo();
+	}
 	loadUserInfo() {
-        if (this.props.id === undefined) return;
+		if (this.props.id === undefined) return;
 		this.serverCommand(
 			"user/view",
 			JSON.stringify({ id: this.props.id }),

@@ -8,13 +8,16 @@
         "meal-price-notice";
 
     max-width: 100%;
-    max-height: 100%;
+    max-height:100%;
+    --min-width: max-content;
+    --min-height: fit-content;
     position: relative;
     overflow: hidden;
     --border: 1px dotted var(--text-color);
     border-radius: 5px;
     padding: 2px;
     gap: 0.5em;
+    align-content: center;
 }
 
 
@@ -25,6 +28,14 @@
         "photos meal-name"
         "photos meal-description"
         "photos meal-price-notice";
+        --min-height: 65vh;
+    }
+}
+
+@media (width < 768px) {
+    .meal-container {
+        --min-width: fit-content;
+        --min-height: 70vh;
     }
 }
 
