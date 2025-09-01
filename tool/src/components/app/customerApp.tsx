@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import Proto, { IProtoProps, IProtoState, ProtoErrorCode, ServerStatusCode } from "../proto";
+import Proto, { IProtoProps, IProtoState, ProtoErrorCode, ServerStatusCode, ViewModeCode } from "../proto";
 import "./customerApp.css";
 import Pending from "../pending";
 import Toaster, { ToastType } from "../toast";
@@ -7,22 +7,58 @@ import Pinger from "../pinger/pinger";
 import React from "react";
 import Login from "../auth/login";
 import { IPhoto } from "@betypes/common";
+import { IOrder } from "@betypes/order";
 import User from "../user/user";
 import LangSelector from "./langselector";
-export interface ICustomerAppProps extends IProtoProps {}
+import Logo from "./logo";
+import { menuItems, products } from "./meals.json";
+import MLString from "../../model/mlstring";
+import MenuItem from "../menu/menuitem";
+import { IMenuItem } from "@betypes/meal";
+import Order from "../order/order";
+import { getCookie, setCookie } from "../../model/tools";
+export interface ICustomerAppProps extends IProtoProps {
+	initMealId?: number;
+}
+
+type CustomerAppMode = "products" | "order";
 
 export interface ICustomerAppState extends IProtoState {
 	needSignIn?: boolean;
+	mealId?: number;
+	order: IOrder;
+	mode: CustomerAppMode;
 }
 
 export default class CustomerApp extends Proto<ICustomerAppProps, ICustomerAppState> {
+	menuItemRef = React.createRef<MenuItem>();
+	orderItemNoteRef = React.createRef<HTMLTextAreaElement>();
+	orderItemQuantityRef = React.createRef<HTMLInputElement>();
 	state: Readonly<ICustomerAppState> = {
 		needSignIn: false,
+		mealId: this.props.initMealId !== undefined ? this.props.initMealId : products[0].id,
+		order: {
+			items: [],
+		},
+		mode: "products"
 	};
 	protected toasterRef = React.createRef<Toaster>();
 	protected pingerRef = React.createRef<Pinger>();
+	selectProduct(productId?: number): void {
+		console.log("Selected product:", productId);
+		this.setState({...this.state, mealId: productId});
+	}
+
 	componentDidMount(): void {
 		document.title = "COODFort: Customer tool";
+		if (getCookie("customer_order")) {
+			try {
+				const order = JSON.parse(getCookie("customer_order") as string) as IOrder;
+				this.setState({ ...this.state, order: order });
+			} catch (e) {
+				console.error("Error parsing order from cookie:", e);
+			}
+		}
 	}
 	init(token?: string): void {
 		this.login(
@@ -63,8 +99,8 @@ export default class CustomerApp extends Proto<ICustomerAppProps, ICustomerAppSt
 					onSignInPressed={(username, password) => {
 						this.signIn(username, password);
 					}}
-					onCreateAccountPressed={(username, password, email, photo) => {
-						this.createAccount(username, password, email, photo);
+					onCreateAccountPressed={(username, password, email, phone, photo) => {
+						this.createAccount(username, password, email, phone, photo);
 					}}
 					onForgotPasswordPressed={email => {
 						this.forgotPassword(email);
@@ -76,7 +112,7 @@ export default class CustomerApp extends Proto<ICustomerAppProps, ICustomerAppSt
 	signIn(username: string, password: string) {
 		this.init(`${username}:${password}`);
 	}
-	createAccount(username: string, password: string, email: string, photo?: IPhoto) {
+	createAccount(username: string, password: string, email: string, phone?: string, photo?: IPhoto) {
 		this.pendingRef.current?.incUse();
 		const headers: Headers = new Headers();
 		headers.append("cf-login", username);
@@ -88,6 +124,7 @@ export default class CustomerApp extends Proto<ICustomerAppProps, ICustomerAppSt
 				password: password,
 				name: username,
 				photo: photo,
+				phone: phone,
 				email: email,
 			}),
 			res => {
@@ -112,10 +149,77 @@ export default class CustomerApp extends Proto<ICustomerAppProps, ICustomerAppSt
 	renderMain(): ReactNode {
 		return (
 			<div className="customerapp-main">
-				<h1>Welcome to the Customer App</h1>
-				<User defaultValue={this.state.user} />
+				<Logo viewMode={ViewModeCode.maximized} />
+				<div className="preview-contacts">
+					{this.state.mode === "order" ? <span onClick={() => this.setState({ ...this.state, mode: "products" })}>&lt;</span> : null}
+					<span onClick={event => {
+						event.preventDefault();
+						if (this.state.mode === "products" && this.state.order.items.length !== 0) {
+							this.setState({ ...this.state, mode: "order" });
+						}
+					}}>
+						<Order defaultValue={this.state.order} mode="compact"/>
+					</span>
+					<User
+						defaultValue={this.state.user}
+						onSignOut={() => {
+							this.setState({ ...this.state, user: undefined });
+							this.init();
+						}}
+					/>
+					<a href={`tel:${process.env.CF_PHONE}`} className="df-call">
+						{process.env.CF_PHONE_VIEW}
+					</a>
+				</div>
+				{this.state.mode === "order"? 
+					<><Order 
+						defaultValue={this.state.order} 
+						mode="detailed"
+					/>
+					<div></div>
+					</>
+				: 
+					<><div className="customerapp-navi">
+					{products.map(product => {
+						return (
+							<span 
+								key={product.id} 
+								className={`df-button-tiramisu${product.id === this.state.mealId ? "-inverse" : ""}`}
+								onClick={product.id === this.state.mealId ? undefined : this.selectProduct.bind(this, product.id)}
+							>
+								{new MLString(product.name).toString()}
+							</span>
+						);
+					})}
+				</div>
+				<MenuItem 
+					defaultValue={this.state.mealId !== undefined ? menuItems.find(item => item.mealId === this.state.mealId) : undefined} 
+					ref={this.menuItemRef}
+				/>
+					<div className="customerapp-orderitem">
+						<input type="number" className="customerapp-orderitem-quantity" placeholder={this.ML("Quantity")} defaultValue={10} ref={this.orderItemQuantityRef} />
+						<span 
+							className="df-button-tiramisu-inverse"
+							onClick={() => {
+								if (this.menuItemRef.current?.value !== undefined && this.orderItemQuantityRef.current?.value !== undefined && parseInt(this.orderItemQuantityRef.current?.value) > 0) {
+									this.addToOrder(this.menuItemRef.current?.value, parseInt(this.orderItemQuantityRef.current.value, 10),
+										this.orderItemNoteRef.current?.value);
+								}
+							}}
+						>{this.ML("Add to order")}</span>
+						<textarea className="customerapp-orderitem-note" placeholder={this.ML("Add note...")} ref={this.orderItemNoteRef} />
+					</div>
+				</>}
 			</div>
 		);
+	}
+	addToOrder(menuItem: IMenuItem, quantity: number, note?: string) {
+    // Example: Save order data to cookie whenever order changes
+		const nState = this.state;
+		nState.order.items.push({ menuItem: JSON.parse(JSON.stringify(menuItem)), count: quantity, comment: note });
+		this.setState(nState, () => {
+			setCookie("customer_order", JSON.stringify(this.state.order), 7);
+		});
 	}
 	render(): ReactNode {
 		let content: ReactNode | undefined;
@@ -144,7 +248,11 @@ export default class CustomerApp extends Proto<ICustomerAppProps, ICustomerAppSt
 						this.setState({ ...this.state, serverStatus: ServerStatusCode.notAvailable });
 					}}
 				/>
-				<LangSelector />
+				<LangSelector
+					onChange={newLang => {
+						window.location.href = `${window.location.pathname}?lang=${newLang}`;
+					}}
+				/>
 			</div>
 		);
 	}

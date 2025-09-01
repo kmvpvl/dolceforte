@@ -7,6 +7,7 @@ import QRCode from "react-qr-code";
 export interface IPhotosProps {
 	defaultValue?: IPhoto[];
 	onChange?: (newValue: IPhoto[]) => void;
+	onClick?: (index: number) => void;
 	editMode?: boolean;
 	className?: string;
 }
@@ -167,6 +168,9 @@ export default class Photos extends React.Component<IPhotosProps, IPhotosState> 
 							className="photo-container"
 							onClick={event => {
 								this.nextPhoto();
+								if (this.props.onClick !== undefined && this.state.currentPhotoIndex !== undefined) {
+									this.props.onClick(this.state.currentPhotoIndex);
+								}
 							}}
 							onTouchStart={event => {
 								event.stopPropagation();

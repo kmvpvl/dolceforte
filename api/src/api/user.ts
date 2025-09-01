@@ -11,7 +11,7 @@ export async function newUser(c: Context, req: Request, res: Response) {
     const password = req.headers['cf-password'] as string;
     const tguid = req.headers['cf-tguid'] as string;
     const tgcheckstring = req.headers['cf-tgquerycheckstring'] as string;
-    const { photo, email } = req.body;
+    const { photo, email, phone } = req.body;
     let lgn: string;
     let psw: string;
     try {
@@ -29,6 +29,7 @@ export async function newUser(c: Context, req: Request, res: Response) {
             photo: photo,
             tguid: tguid,
             email: email,
+            phone: phone,
             hash: hash,
             login: lgn, 
             settings: {

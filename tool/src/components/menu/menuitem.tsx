@@ -1,197 +1,212 @@
-import { ReactNode } from "react";
-import Proto, { IProtoProps, IProtoState, ViewModeCode } from "../proto";
+import { Types } from "@betypes/common";
 import "./menuitem.css";
-import Meal, { IMealProps, IMealState } from "./meal";
-import { Types } from "@betypes/prototypes";
-import { IMeal, IMealOption, IMenuItem } from "@betypes/eaterytypes";
-import MLStringEditor from "../mlstring/mlstring";
-import React from "react";
+import { IMealOption, IMenuItem } from "@betypes/meal";
+import Proto, { IProtoProps, IProtoState, ViewModeCode } from "../proto";
+import { ReactNode } from "react";
+import Radio from "../radio";
+import { products } from "../app/meals.json";
+import articleImages from "../app/images.json";
+import { IOrderItemAmount } from "@betypes/order";
+import MLString from "../../model/mlstring";
 
 export interface IMenuItemProps extends IProtoProps {
+	mealId?: Types.ObjectId;
 	defaultValue?: IMenuItem;
 	admin?: boolean;
+	viewMode?: ViewModeCode;
 	editMode?: boolean;
 	onSave?: (newValue: IMenuItem) => void;
 	onChange?: (newValue: IMenuItem) => void;
-	onSelectOption?: (meal: IMeal, option: IMealOption) => void;
-	onUp?: (menuItemId: Types.ObjectId) => void;
-	onDown?: (menuItemId: Types.ObjectId) => void;
-	onDelete?: (menuItemId: Types.ObjectId) => void;
-	viewMode?: ViewModeCode;
-	className?: string;
+	onViewModeChange?: (oldValue: ViewModeCode, newValue: ViewModeCode) => void;
+	onClick?: (menuItem: IMenuItem) => void;
 }
 export interface IMenuItemState extends IProtoState {
-	value: IMenuItem;
-	editMode?: boolean;
-	changed?: boolean;
-	currentOptionSelected?: number;
-	viewMode: ViewModeCode;
+    editMode: boolean;
+    value: IMenuItem;
+    changed?: boolean;
+    viewMode: ViewModeCode;
 }
 
 export default class MenuItem extends Proto<IMenuItemProps, IMenuItemState> {
-	protected mealRef: React.RefObject<Meal | null> = React.createRef();
-	optionIds: number[] = [];
-	state: IMenuItemState = {
-		value: this.props.defaultValue !== undefined ? this.props.defaultValue : this.new(),
-		editMode: this.props.editMode,
-		viewMode: this.props.viewMode !== undefined ? this.props.viewMode : ViewModeCode.normal,
-	};
-	new(): IMenuItem {
-		return {
-			options: [],
-		};
-	}
-	hashOption(x: number): string {
-		while (this.optionIds.length - 1 < x) this.optionIds.push(Math.random());
-		return `${this.optionIds[x]}_${x}`;
-	}
-	renderEditMode(): ReactNode {
-		return (
-			<span className="menu-item-admin-container has-caption">
-				<span className="caption">Menu item</span>
-				<Meal mealId={this.state.value.mealId} />
-				<div className="menu-item-admin-options-list-container has-caption">
-					<span className="caption">Options</span>
-					<div className="toolbar">
-						<span
-							onClick={event => {
-								const nState = this.state;
-								if (nState.value.options === undefined) nState.value.options = [];
-								nState.value.options.push({
-									name: "",
-									amount: 0,
-									currency: "",
-								});
-								this.setState(nState);
-							}}>
-							+
-						</span>
-						<span>?</span>
-					</div>
-					<div className="menu-item-admin-options-list">
-						{this.state.value?.options?.map((option, idx) => (
-							<span className="has-caption" key={this.hashOption(idx)}>
-								<MLStringEditor
-									defaultValue={option.name}
-									caption="Option name"
-									onChange={newValue => {
-										const nState = this.state;
-										if (nState.value === undefined) return;
-										nState.changed = true;
-										nState.value.options[idx].name = newValue;
-										this.setState(nState);
-										if (this.props.onChange !== undefined) this.props.onChange(this.state.value);
-									}}
-								/>
-								<input
-									type="number"
-									placeholder="Amount"
-									defaultValue={option.amount}
-									onChange={event => {
-										const nv = parseFloat(event.currentTarget.value);
-										if (!isNaN(nv)) {
-											const nState = this.state;
-											nState.changed = true;
-											nState.value.options[idx].amount = nv;
-											this.setState(nState);
-											if (this.props.onChange !== undefined) this.props.onChange(this.state.value);
-										}
-									}}></input>
-								<MLStringEditor
-									defaultValue={option.currency}
-									caption="Currency"
-									onChange={newValue => {
-										const nState = this.state;
-										if (nState.value === undefined) return;
-										nState.changed = true;
-										nState.value.options[idx].currency = newValue;
-										this.setState(nState);
-										if (this.props.onChange !== undefined) this.props.onChange(this.state.value);
-									}}
-								/>
-								<span className="toolbar">
-									{idx !== 0 ? (
-										<span
-											onClick={event => {
-												//debugger
-												this.state.value?.options.splice(idx - 1, 0, ...this.state.value?.options.splice(idx, 1));
-												this.optionIds.splice(idx - 1, 0, ...this.optionIds.splice(idx, 1));
-												this.setState(this.state);
-												if (this.props.onChange !== undefined) this.props.onChange(this.state.value);
-											}}>
-											↑
-										</span>
-									) : (
-										<></>
-									)}
-									{idx !== this.state.value?.options.length - 1 ? (
-										<span
-											onClick={event => {
-												this.state.value?.options.splice(idx + 1, 0, ...this.state.value?.options.splice(idx, 1));
-												this.optionIds.splice(idx + 1, 0, ...this.optionIds.splice(idx, 1));
-												this.setState(this.state);
-												if (this.props.onChange !== undefined) this.props.onChange(this.state.value);
-											}}>
-											↓
-										</span>
-									) : (
-										<></>
-									)}
-									<span
-										onClick={event => {
-											const nState = this.state;
-											nState.value.options.splice(idx, 1);
-											if (this.props.onChange !== undefined) this.props.onChange(this.state.value);
-											this.setState(nState);
-										}}>
-										<span style={{ transform: "rotate(45deg)", display: "block" }}>+</span>
-									</span>
-								</span>
-							</span>
-						))}
-					</div>
-				</div>
-			</span>
-		);
-	}
-	renderCompact(): ReactNode {
-		return (
-			<div className={`menu-item-compact ${this.props.className !== undefined ? this.props.className : ""}`}>
-				<Meal mealId={this.state.value.mealId} viewMode={ViewModeCode.compact} />
-			</div>
-		);
-	}
-	render(): ReactNode {
-		if (this.state.editMode) return this.renderEditMode();
-		if (this.state.viewMode === ViewModeCode.compact) return this.renderCompact();
-		return (
-			<span className={`menu-item-container${this.state.viewMode === ViewModeCode.maximized ? " maximized" : ""}`}>
-				<Meal mealId={this.state.value.mealId} ref={this.mealRef} onViewModeChange={(oldV, newV) => this.setState({ ...this.state, viewMode: newV })} />
-				<div className="menu-item-options">
-					{this.state.value.options?.map((option, idx) => (
-						<span
-							className={`menu-item-option${this.state.currentOptionSelected === idx ? " selected" : ""}`}
-							key={idx}
-							data-option-id={idx}
-							onClick={event => {
-								const optionId = event.currentTarget.attributes.getNamedItem("data-option-id")?.value;
-								if (optionId !== undefined) {
-									const nState = this.state;
-									nState.currentOptionSelected = parseInt(optionId);
-									this.setState(nState);
-									if (this.props.onSelectOption && this.mealRef.current) this.props.onSelectOption(this.mealRef.current.value, this.state.value.options[parseInt(optionId)]);
-								}
-							}}
-							style={this.state.viewMode === ViewModeCode.maximized ? { fontSize: "150%" } : {}}>
-							<span style={{ gridRow: "1 / 3" }}>{this.state.currentOptionSelected === idx ? "☑" : "☐"}</span>
-							<span className="menu-item-option-volume">{this.toString(option.name)}</span>
-							<span className="menu-item-option-price">
-								{this.toCurrency(option.amount)} {this.toString(option.currency)}
-							</span>
-						</span>
-					))}
-				</div>
-			</span>
-		);
-	}
+    constructor(props: IMenuItemProps) {
+        super(props);
+        this.state = {
+            value: this.props.defaultValue ? JSON.parse(JSON.stringify(this.props.defaultValue)) : this.new(),
+            viewMode: this.props.viewMode !== undefined ? this.props.viewMode : ViewModeCode.normal,
+            editMode: this.props.editMode !== undefined ? this.props.editMode : false,
+        };
+        for (const option of this.state.value.options) {
+            if (option.includeOptions !== undefined) option.includeOptions = option.includeOptions.filter(incOption => incOption.default !== undefined && incOption.default);
+        }
+        this.state.value.containers = this.props.defaultValue?.containers.filter(container => container.default !== undefined && container.default) || [];
+    }
+    
+    static article(menuItem: IMenuItem): string{
+        const artArr = [];
+        artArr.push(menuItem.mealId? products.find(p => p.id === menuItem?.mealId)?.article || "" : "");
+        menuItem.options.forEach(option => {
+            artArr.push(option.article);
+            if (option.includeOptions !== undefined) {
+                for (const incOption of option.includeOptions) {
+                    artArr.push(incOption.article);
+                    if (incOption.includeOptions !== undefined) {
+                        for (const opt of incOption.includeOptions) {
+                            artArr.push(opt.article);
+                        }
+                    }
+                }
+            }
+        });
+        if (menuItem.containers.length > 0) artArr.push(menuItem.containers[0].article);
+        return artArr.join("");
+    }
+
+    static articleName(menuItem: IMenuItem, language: string): string {
+        const meal = products.find(p => p.id === menuItem?.mealId);
+        if (meal === undefined) return "";
+        let art = new MLString(meal.name).toString(language);
+        const art1 = [];
+        for (const option of menuItem.options) {
+            //art += ", " + new MLString(option.name).toString(language);
+            if (option.includeOptions !== undefined) {
+                for (const incOption of option.includeOptions) {
+                    art1.push(new MLString(incOption.name).toString(language));
+                }
+            }
+        };
+        for (const container of menuItem.containers) {
+            art1.push(new MLString(container.name).toString(language));
+            art1.push(`${container.weight}g`);
+        }
+        return `${art} (${art1.join(", ")})`;
+    }
+
+    static amount(menuItem: IMenuItem): IOrderItemAmount {
+        let sum = menuItem.basePrice || 0;
+        let sumDeposit = 0;
+        for (const option of menuItem.options) {
+            for (const incOption of option.includeOptions || []) {
+                if (incOption.amount !== undefined) {
+                    sum += incOption.amount;
+                }
+            }
+        }
+        for (const container of menuItem.containers) {
+            sum = sum * container.weight/100;
+            if (container.amount !== undefined) {
+                if (container.deposit) sumDeposit += container.amount;
+                else sum += container.amount;
+            }
+        }
+        return { deposit: sumDeposit, product: sum };
+    }
+
+    new(): IMenuItem {
+        return {
+            options: [],
+            containers: [],
+            mealId: this.props.mealId,
+        };
+    }
+
+    get value(): IMenuItem {
+        return this.state.value;
+    }
+    componentDidUpdate(prevProps: Readonly<IMenuItemProps>, prevState: Readonly<IMenuItemState>, snapshot?: any): void {
+        if (prevProps.defaultValue !== this.props.defaultValue) {
+            const newValue = this.props.defaultValue ? JSON.parse(JSON.stringify(this.props.defaultValue)) : this.new();
+            for (const option of newValue.options) {
+                if (option.includeOptions !== undefined) option.includeOptions = option.includeOptions.filter((incOption: any) => incOption.default !== undefined && incOption.default);
+            }
+            newValue.containers = this.props.defaultValue?.containers.filter(container => container.default !== undefined && container.default) || [];
+            this.setState({
+                value: newValue,
+            });
+        }
+    }
+    onCheckOptions(chapter: Types.IMLString, label: Types.IMLString, checked: boolean) {
+        const newState = this.state;
+        const option = this.value?.options.find(opt => this.toString(chapter) === this.toString(opt.name));
+        console.log("Option found:", option);
+        if (option !== undefined) option.includeOptions = [];
+        const optOrigin = this.props.defaultValue?.options.find(opt => this.toString(chapter) === this.toString(opt.name));
+        if (optOrigin !== undefined) {
+            const incOptionOrigin = optOrigin.includeOptions?.find(opt => this.toString(opt.name) === this.toString(label));
+            if (incOptionOrigin !== undefined && option !== undefined) {
+                option.includeOptions?.push(JSON.parse(JSON.stringify(incOptionOrigin)));
+            }
+        }
+        if (option?.includeOptions?.length === 0) {
+            console.log("No include options selected, removing includeOptions array");
+        }
+        this.setState(newState);
+
+    }
+    onCheckContainerOptions(label: Types.IMLString, checked: boolean) {
+        const newState = this.state;
+        const containerOrigin = this.props.defaultValue?.containers.find(c => this.toString(c.name) === this.toString(label));
+        if (containerOrigin !== undefined) {
+            newState.value.containers = [JSON.parse(JSON.stringify(containerOrigin))];
+        }
+        this.setState(newState);
+    }
+    render(): ReactNode {
+        const product = products.find(p => p.id === this.value.mealId);
+        const photo = articleImages.find(photo => {
+            if (new RegExp(photo.regexp).test(MenuItem.article(this.value))) {
+                return true;
+            }
+            return false;
+        });
+        const amount = MenuItem.amount(this.value);
+        return <div className="menuitem-container">
+            {product !== undefined? <div><div className="menuitem-title">{this.toString(product.name)} {amount.product} RSD/{this.ML("pc")}</div><span>{this.ML("Container deposit (refundable)")} {amount.deposit} RSD/{this.ML("pc")} </span></div> : null}
+            {this.props.defaultValue?.options.map((option, index) => {
+                const optVal = this.value.options.find(opt => this.toString(opt.name) === this.toString(option.name));
+                return (<div key={index} className="menuitem-option">
+                    <span className="menuitem-option-name">{this.toString(option.name)}</span>
+                    {option.includeOptions? <div className="menuitem-option-include">
+                        {option.includeOptions.map((includeOption, includeIndex) => (
+                            <div key={includeIndex} className="menuitem-option-include-item">
+                                <Radio
+                                    lang={this.getLanguage()}
+                                    key={`${this.value.mealId}-${index}-${includeIndex}`}
+                                    label={includeOption.name}
+                                    checked={optVal?.includeOptions?.find((opt: IMealOption) => this.toString(opt.name) === this.toString(includeOption.name))!== undefined}
+                                    onChange={(label, checked) => {
+                                        console.log("Include option changed:", label, checked);
+                                        this.onCheckOptions(option.name, label, checked);
+                                    }}
+                                />
+                                {includeOption.amount !== undefined && includeOption.amount > 0 ? <span> +{includeOption.amount} {includeOption.currency? this.toString(includeOption.currency) : null}</span> : null}   
+                            </div>
+                        ))}
+                    </div> : null}
+                </div>);
+            })}
+            <div className="menuitem-option">
+                <div className="menuitem-option-name">{this.ML("Packaging")}</div>
+                <div className="menuitem-containers-list">
+                    {this.props.defaultValue?.containers?.map((container, index) => (
+                        <div key={index} className="menuitem-option-include-item">
+                            <Radio
+                                key={`${this.value.mealId}-container-${index}`}
+                                label={`${this.toString(container.name)} (${container.weight}g) ${container.amount > 0? `+${container.amount} ${container.currency ? this.toString(container.currency) : null} `: ""}${container.deposit? `${this.ML("deposit")}` :""}`}
+                                checked={this.value.containers?.find(c => this.toString(c.name) === this.toString(container.name)) !== undefined}
+                                onChange={(label, checked) => {
+                                    console.log("Container option changed:", label, checked);
+                                    this.onCheckContainerOptions(container.name, checked);
+                                }}
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
+            <div className="menuitem-article">
+                <div>{this.ML("Article")}: {MenuItem.article(this.value)}</div>
+                <div><img src={photo?.url} alt={MenuItem.article(this.value)} /></div>
+
+            </div>
+        </div>
+    }
 }

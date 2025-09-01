@@ -13,7 +13,7 @@
 }   
 
 .login-create-account span {
-    grid-row: span 6; /* Make the second child span both columns */
+    grid-row: span 7; /* Make the second child span both columns */
 }
 
 .login-forgot-password {

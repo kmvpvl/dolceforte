@@ -54,14 +54,14 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-family: "Cinzel", serif;
+    font-family: "Cinzel", "Cormorant Garamond", serif;
     color: var(--crnacokolada-color);
     grid-area: meal-description;
 }
 .meal-meal-name{
     text-align: center;
     font-weight: bold;
-    font-family: "Cinzel", serif;
+    font-family: "Cinzel", "Cormorant Garamond", serif;
 
     font-size: 2em;
     color: var(--crnacokolada-color);
@@ -71,7 +71,7 @@
 .meal-price-notice {
     text-align: center;
     font-weight: bold;
-    font-family: "Cinzel", serif;
+    font-family: "Cinzel", "Cormorant Garamond", serif;
     font-size: 1.2em;
     color: var(--kakao-color);
     grid-area: meal-price-notice;

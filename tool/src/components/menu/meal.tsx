@@ -2,11 +2,12 @@ import "./meal.css";
 import { ReactNode } from "react";
 import Proto, { IProtoProps, IProtoState, ViewModeCode } from "../proto";
 
-import { IMeal } from "@betypes/meal";
+import { IMeal, IMenuItem } from "@betypes/meal";
 import MLStringEditor from "../mlstring/mlstring";
 import Photos from "../photos/photos";
 import Tags from "../tags/tags";
 import { Types } from "@betypes/common";
+import { menuItems } from "../app/meals.json";
 
 export interface IMealProps extends IProtoProps {
 	mealId?: Types.ObjectId;
@@ -17,6 +18,7 @@ export interface IMealProps extends IProtoProps {
 	onSave?: (newValue: IMeal) => void;
 	onChange?: (newValue: IMeal) => void;
 	onViewModeChange?: (oldValue: ViewModeCode, newValue: ViewModeCode) => void;
+	onClick?: (meal: IMeal) => void;
 }
 
 export interface IMealState extends IProtoState {
@@ -40,49 +42,15 @@ export default class Meal extends Proto<IMealProps, IMealState> {
 		}
 	}
 
-	componentDidMount(): void {
-		if (this.props.defaultValue === undefined && this.props.mealId !== undefined) this.load();
-	}
-
 	new(): IMeal {
 		const newMeal: IMeal = {
 			name: "New meal",
-			description: "Mew meal description. Add photo!",
+			description: "New meal description. Add photo!",
 			photos: [],
 		};
 		return newMeal;
 	}
 
-	protected load() {
-		this.serverCommand(
-			"meal/view",
-			JSON.stringify({ id: this.props.mealId }),
-			res => {
-				if (!res.ok) return;
-				const nState = this.state;
-				nState.changed = false;
-				nState.value = res.meal;
-				this.setState(nState);
-			},
-			err => {}
-		);
-	}
-
-	protected save() {
-		this.serverCommand(
-			"meal/update",
-			JSON.stringify(this.state.value),
-			res => {
-				if (!res.ok) return;
-				if (this.props.onSave !== undefined) this.props.onSave(res.meal);
-				const nState = this.state;
-				nState.value = res.meal;
-				nState.changed = false;
-				this.setState(nState);
-			},
-			err => {}
-		);
-	}
 
 	get value(): IMeal {
 		return this.state.value;
@@ -99,7 +67,7 @@ export default class Meal extends Proto<IMealProps, IMealState> {
 								const nState = this.state;
 								nState.value.blocked = true;
 								this.setState(nState);
-								this.save();
+								//this.save();
 							}
 						}}>
 						<span style={{ transform: "rotate(45deg)", display: "block" }}>+</span>
@@ -117,9 +85,6 @@ export default class Meal extends Proto<IMealProps, IMealState> {
 							navigator.clipboard.writeText(JSON.stringify(this.state.value, undefined, 4));
 						}}>
 						⚯
-					</span>
-					<span onClick={this.save.bind(this)}>
-						<i className="fa fa-save" style={this.state.changed ? { color: "red" } : {}} />
 					</span>
 				</div>
 				<div className="meal-admin-requisites-container has-caption">
@@ -171,6 +136,11 @@ export default class Meal extends Proto<IMealProps, IMealState> {
 	render(): ReactNode {
 		if (this.state.editMode) return this.renderEditMode();
 		if (this.state.viewMode === ViewModeCode.compact) return this.renderCompact();
+		//debugger
+		const minPrice = menuItems.filter(item => item.mealId === this.value.id).reduce((min, option) => {
+			const optionPrice = option.basePrice ? option.basePrice : 0;
+			return optionPrice < min ? optionPrice : min;
+		}, Infinity);
 		return (
 			<span
 				className={`meal-container${this.state.viewMode === ViewModeCode.maximized ? " maximized" : ""}`}
@@ -183,10 +153,18 @@ export default class Meal extends Proto<IMealProps, IMealState> {
 					<span>{this.props.mealId !== undefined && this.state.value.id === undefined ? "" : this.toString(this.state.value.name)}</span>
 				</div>
 				<div className="meal-meal-description">{this.props.mealId !== undefined && this.state.value.id === undefined ? "Loading..." : this.toString(this.state.value.description)}</div>
-				{this.state.value.photos !== undefined ? <Photos defaultValue={this.state.value.photos} /> : <span />}
+				{this.state.value.photos !== undefined ? <Photos onClick={() => {
+						if (this.props.onClick !== undefined) this.props.onClick(this.state.value);
+					}
+				} defaultValue={this.state.value.photos} /> : <span />}
 				<div className="meal-price-notice">
-					<span>{this.ML("From 150 RSD/100g")}</span>
-					<span className="df-button-bottlegreen">{this.ML("Configure yours")}</span>
+					<span>{this.ML("From")} {minPrice} RSD/100g</span>
+					<span
+						className="df-button-bottlegreen"
+						onClick={event => {
+							document.location.href = `/customer?meal=${this.state.value.id}${this.getLanguage() !== undefined?`&lang=${this.getLanguage()}`:""}`;
+						}}
+					>{this.ML("Configure yours")}</span>
 				</div>
 				<div className="context-toolbar">
 					{this.props.admin ? (

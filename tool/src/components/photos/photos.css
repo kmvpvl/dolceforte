@@ -52,7 +52,7 @@
 .photo-container > img {
     max-height: 100%;
     max-width: 100%;
-    border-radius: 5px;
+    border-radius: 20px;
     margin-left: auto;
     margin-right: auto;
     object-fit: contain;

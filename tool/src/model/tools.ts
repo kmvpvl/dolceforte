@@ -1,4 +1,4 @@
-import { Types } from "@betypes/prototypes";
+import { Types } from "@betypes/common";
 
 export function URI2DataURL(url: string, successCB: (res: string | ArrayBuffer | null) => void, failCB?: (err: any) => void) {
 	fetch(url, { mode: "cors", headers: { referer: "" } })
@@ -35,4 +35,21 @@ export function revealTelegramStartAppParams(url_text: string): Array<any> {
 	const params_str = url.searchParams.get("startapp");
 	if (!url.searchParams.has("startapp") || !params_str) return takeApartTelegramStartAppParams("");
 	return takeApartTelegramStartAppParams(params_str);
+}
+
+// Helper to set a cookie
+export function setCookie(name: string, value: string, days = 7) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+export function getCookie(name: string): string | null {
+	return document.cookie.split('; ').reduce((r, v) => {
+		const parts = v.split('=');
+		return parts[0] === name ? decodeURIComponent(parts[1]) : r
+	}, null as string | null);
+}
+
+export function deleteCookie(name: string) {
+	setCookie(name, '', -1);
 }

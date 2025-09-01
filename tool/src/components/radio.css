@@ -1,0 +1,19 @@
+.radio {
+    display: flex;
+    --align-items: center;
+}
+.radio > svg {
+    margin-right: .2em;
+    width: 1em;
+    height: 1em;
+}
+
+.radio-inner-circle {
+    fill: var(--crnacokolada-color);
+}
+
+.radio-circle {
+    fill: none;
+    stroke: var(--crnacokolada-color);
+    stroke-width: 2;
+}

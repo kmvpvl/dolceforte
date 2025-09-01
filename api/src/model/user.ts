@@ -18,6 +18,7 @@ export class User extends Document<IUser, IUserDataSchema, IUserWFSchema> {
             fields: [
                 { name: `login`, type: 'varchar(128)', required: true },
                 { name: `email`, type: 'varchar(128)', required: true },
+                { name: `phone`, type: 'varchar(128)', required: false },
                 { name: `hash`, type: 'varchar(128)', required: true },
                 { name: `name`, type: 'varchar(128)', required: true },
                 { name: `photo`, type: 'json' },

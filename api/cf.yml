@@ -111,6 +111,9 @@ components:
             name:
               type: string
               description: Visible name of user
+            phone:
+              type: string
+              description: User's phone number
             email:
               type: string
               description: User's e-mail
@@ -432,6 +435,9 @@ paths:
                 email:
                   type: string
                   example: david@domain.com
+                phone:
+                  type: string
+                  example: +1234567890
                 name:
                   type: string
                   example: David Rhuxel

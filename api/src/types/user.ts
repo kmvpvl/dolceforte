@@ -17,6 +17,7 @@ export interface IUserSettings {
 export interface IUser extends Types.IDocument{
     login: string;
     email: string;
+    phone?: string;
     name: string;
     hash: string;
     tguid?: string | number;

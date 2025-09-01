@@ -44,9 +44,10 @@ function getContentByPath(): React.ReactNode {
 		//tableId = params.get("tableId") ? parseInt(params.get("tableId") as string) : undefined;
 	}
 	//debugger
+	const mealId = params.get("meal")?parseInt(params.get("meal") as string): undefined;
 	switch (path) {
 		case "customer":
-			return <CustomerApp />;
+			return <CustomerApp initMealId={mealId}/>;
 		case "admin":
 		default:
 			return <Preview />;

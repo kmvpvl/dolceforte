@@ -13,7 +13,7 @@ enum LoginModeType {
 
 export interface ILoginProps extends IProtoProps {
 	onSignInPressed?: (name: string, password: string) => void;
-	onCreateAccountPressed?: (name: string, password: string, email: string, photo?: IPhoto) => void;
+	onCreateAccountPressed?: (name: string, password: string, email: string, phone: string, photo?: IPhoto) => void;
 	onForgotPasswordPressed?: (email: string) => void;
 	mode?: LoginModeType;
 }
@@ -41,11 +41,12 @@ export default class Login extends Proto<ILoginProps, ILoginState> {
 					const repeatPassword = formData.get("repeatPassword") as string;
 					const photo = this.avatarRef.current?.value ? { url: this.avatarRef.current?.value } : undefined;
 					const email = formData.get("email") as string;
+					const phone = formData.get("phone") as string;
 					if (password !== repeatPassword) {
 						// Handle password mismatch
 					}
 					if (this.props.onCreateAccountPressed) {
-						this.props.onCreateAccountPressed(name, password, email, photo);
+						this.props.onCreateAccountPressed(name, password, email, phone, photo);
 					}
 				}}>
 				<h2>{this.ML("Create Account")}</h2>
@@ -57,6 +58,7 @@ export default class Login extends Proto<ILoginProps, ILoginState> {
 				<input id="create-password" type="password" placeholder={this.ML("Password")} name="password" autoComplete="new-password" />
 				<input id="create-repeatPassword" type="password" placeholder={this.ML("Repeat Password")} name="repeatPassword" autoComplete="new-password" />
 				<input id="create-email" type="email" placeholder={this.ML("E-mail")} name="email" autoComplete="email" />
+				<input id="create-phone" type="tel" placeholder={this.ML("Phone")} name="phone" autoComplete="tel" />
 				<button type="submit">{this.ML("Create Account")}</button>
 				<button type="button" onClick={() => this.setState({ mode: LoginModeType.SignIn })}>
 					{this.ML("I already have an account and want to access from a new device")}
