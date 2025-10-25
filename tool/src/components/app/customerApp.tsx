@@ -120,8 +120,8 @@ export default class CustomerApp extends Proto<ICustomerAppProps, ICustomerAppSt
 		this.serverCommand(
 			"user/new",
 			JSON.stringify({
-				login: username,
-				password: password,
+				//login: username,
+				//password: password,
 				name: username,
 				photo: photo,
 				phone: phone,

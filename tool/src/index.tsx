@@ -47,10 +47,12 @@ function getContentByPath(): React.ReactNode {
 	const mealId = params.get("meal")?parseInt(params.get("meal") as string): undefined;
 	switch (path) {
 		case "customer":
-			return <CustomerApp initMealId={mealId}/>;
+			if (process.env.MODE === "maintenance") return <div>Under Maintenance</div>;
+			else return <CustomerApp initMealId={mealId}/>;
 		case "admin":
 		default:
-			return <Preview />;
+			if (process.env.MODE === "maintenance") return <div>Under Maintenance</div>;
+			else return <Preview />;
 	}
 }
 root.render(<React.StrictMode>{getContentByPath()}</React.StrictMode>);

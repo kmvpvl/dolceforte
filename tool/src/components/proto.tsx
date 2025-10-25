@@ -158,7 +158,7 @@ export default class Proto<IProps extends IProtoProps, IState extends IProtoStat
 			})
 			.then(v => {
 				this.pendingRef.current?.decUse();
-				if (process.env.MODE === "development") console.log(`command = '${command}', body = '${body}', response = `, v);
+				if (process.env.MODE !== "production") console.log(`command = '${command}', body = '${body}', response = `, v);
 				if (this.state.serverStatus !== ServerStatusCode.connected) {
 					const nStatus: IState = this.state;
 					nStatus.serverStatus = ServerStatusCode.connected;
@@ -177,7 +177,7 @@ export default class Proto<IProps extends IProtoProps, IState extends IProtoStat
 					}
 					if (failcb) {
 						const err = new ProtoError(ProtoErrorCode.serverNotAvailable, v.message);
-						if (process.env.MODE === "development") console.log(`command = '${command}', body = '${body}', response = `, err.json);
+						if (process.env.MODE !== "production") console.log(`command = '${command}', body = '${body}', response = `, err.json);
 						failcb(new ProtoError(ProtoErrorCode.serverNotAvailable, v.message));
 					}
 				} else {
@@ -187,7 +187,7 @@ export default class Proto<IProps extends IProtoProps, IState extends IProtoStat
 							if (v.status === 500) errCode = ProtoErrorCode.serverBroken;
 							if (v.status === 401) errCode = ProtoErrorCode.authDataExpected;
 							const err = new ProtoError(errCode, v.statusText, v.status, j);
-							if (process.env.MODE === "development") console.log(`command = '${command}', body = '${body}', response = `, err.json);
+							if (process.env.MODE !== "production") console.log(`command = '${command}', body = '${body}', response = `, err.json);
 							if (this.state.serverStatus !== ServerStatusCode.connected) {
 								const nStatus: IState = this.state;
 								nStatus.serverStatus = ServerStatusCode.connected;
@@ -196,7 +196,7 @@ export default class Proto<IProps extends IProtoProps, IState extends IProtoStat
 							if (failcb) failcb(err);
 						})
 						.catch((err: any) => {
-							if (process.env.MODE === "development") console.log(`command = '${command}', body = '${body}', response = `, err.json);
+							if (process.env.MODE !== "production") console.log(`command = '${command}', body = '${body}', response = `, err.json);
 							debugger;
 						});
 				}

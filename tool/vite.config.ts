@@ -41,7 +41,7 @@ export default defineConfig((config) => {
       "process.env.LANGUAGES": JSON.stringify(env.LANGUAGES),
       "process.env.CF_PHONE": JSON.stringify(env.CF_PHONE),
       "process.env.CF_PHONE_VIEW": JSON.stringify(env.CF_PHONE_VIEW),
-      "process.env.MODE": JSON.stringify(config.mode),
+      "process.env.MODE": JSON.stringify(env.MODE) !== "" ? JSON.stringify(env.MODE) : JSON.stringify(config.mode),
     },
     plugins: [react()],
     resolve: {

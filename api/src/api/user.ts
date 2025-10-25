@@ -49,6 +49,7 @@ export async function newUser(c: Context, req: Request, res: Response) {
         if (e instanceof DocumentError) {
             return res.status(400).json({ ok: false, err: e.json });
         }
+        console.error(e);
         return res.status(500).json({ ok: false, err: e.toString(), message: e.message });
     }
 }

@@ -7,8 +7,8 @@ servers:
     description: Local server
   - url: https://3z6czkv5-4000.euw.devtunnels.ms/
     description: Development server
-  - url: https://cf-api.misis.space
-    description: Test server
+  - url: https://api.dolceforte.rs
+    description: Production server
 components:
   schemas:
 ###
